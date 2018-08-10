@@ -7,20 +7,21 @@ module AWS
   end
 
   class CloudWatch
+    SERVICE = 'monitoring'
+    API_VERSION_LATEST = '2010-08-01'
 
     def initialize(access_key, secret_key, region = nil, endpoint = nil)
       @access_key = access_key || ENV['AWS_ACCESS_KEY_ID']
       @secret_key = secret_key || ENV['AWS_SECRET_ACCESS_KEY']
       @region = region || ENV["AWS_DEFAULT_REGION"] || 'us-east-1'
-      @service = 'monitoring'
-      @endpoint = HTTP::Parser.new.parse_url("https://#{@service}.#{@region}.amazonaws.com")
+      @endpoint = HTTP::Parser.new.parse_url("https://#{SERVICE}.#{@region}.amazonaws.com")
       @http = SimpleHttpExt.new(@endpoint.schema, @endpoint.host, @endpoint.port)
     end
 
     def list_metrics()
       params = {
         :Action => 'ListMetrics',
-        :Version => '2010-08-01'
+        :Version => API_VERSION_LATEST
       }
       request('POST', params)
     end
@@ -57,12 +58,12 @@ module AWS
       #puts "\n\n"
 
       algo = 'AWS4-HMAC-SHA256'
-      scope = "#{date}/#{@region}/#{@service}/aws4_request"
+      scope = "#{date}/#{@region}/#{SERVICE}/aws4_request"
       hash = Digest::SHA256.hexdigest(canonical)
       str_to_sign = "#{algo}\n#{timestamp}\n#{scope}\n#{hash}"
 
       sign_key = Digest::HMAC.digest('aws4_request',
-        Digest::HMAC.digest(@service,
+        Digest::HMAC.digest(SERVICE,
           Digest::HMAC.digest(@region,
             Digest::HMAC.digest(date,
               "AWS4#{@secret_key}",Digest::SHA256),
