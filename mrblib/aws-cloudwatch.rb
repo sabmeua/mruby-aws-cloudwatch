@@ -48,10 +48,6 @@ module AWS::CloudWatch
       signed_header = header.keys.sort.join(';').downcase
       canonical += "\n#{signed_header}\n#{Digest::SHA256::hexdigest(payload)}"
 
-      #puts "\n\n"
-      #puts canonical
-      #puts "\n\n"
-
       algo = 'AWS4-HMAC-SHA256'
       scope = "#{date}/#{@region}/#{AWS::CloudWatch::SERVICE}/aws4_request"
       hash = Digest::SHA256.hexdigest(canonical)
@@ -74,10 +70,6 @@ module AWS::CloudWatch
       if method == 'POST'
         header['Body'] = payload
       end
-
-      #puts "\n\nstr to sign\n#{str_to_sign}\n\n"
-      #puts "\n\nsign key\n#{sign_key}\n\n"
-      #puts "\n\nauthorization\n#{header['Authorization']}\n\n"
 
       path += "?#{query}" if query
       @http.request method, path, header
