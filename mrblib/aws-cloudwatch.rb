@@ -1,3 +1,5 @@
+module AWS ; end
+
 module AWS::CloudWatch
   SERVICE = 'monitoring'
   API_VERSION_LATEST = '2010-08-01'

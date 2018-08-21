@@ -1,3 +1,5 @@
+module AWS; end
+
 module AWS::CloudWatch
 
   module Functions
